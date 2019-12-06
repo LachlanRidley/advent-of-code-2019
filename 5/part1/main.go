@@ -3,9 +3,9 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"strings"
-	"strconv"
 	"os"
+	"strconv"
+	"strings"
 )
 
 func stringToIntSlice(opcode string) []int {
@@ -30,17 +30,17 @@ func intSliceToString(opcode []int) string {
 	return strings.Join(opcodeStrings, ",")
 }
 
-type Command struct {
-	opcode int
+type command struct {
+	opcode     int
 	paramModes [3]int
 }
 
-func (c Command) String() string {
+func (c command) String() string {
 	return fmt.Sprintf("%d -> %d %d %d", c.opcode, c.paramModes[0], c.paramModes[1], c.paramModes[2])
 }
 
-func parseCommand(param int) Command {
-	command := Command{-1, [3]int{0,0,0}}
+func parseCommand(param int) command {
+	command := command{-1, [3]int{0, 0, 0}}
 
 	command.opcode = param % 100
 
@@ -54,11 +54,11 @@ func parseCommand(param int) Command {
 	return command
 }
 
-func getValue(command Command, paramIndex int, memory []int, pointer int) int {
+func getValue(command command, paramIndex int, memory []int, pointer int) int {
 	if command.paramModes[paramIndex] == 0 {
-		return memory[memory[pointer + (paramIndex + 1)]]
+		return memory[memory[pointer+(paramIndex+1)]]
 	} else {
-		return memory[pointer + (paramIndex + 1)]
+		return memory[pointer+(paramIndex+1)]
 	}
 }
 
@@ -75,14 +75,14 @@ func RunOpcode(opcode string) string {
 			value1 := getValue(command, 0, intSlice, pointer)
 			value2 := getValue(command, 1, intSlice, pointer)
 
-			intSlice[intSlice[pointer + 3]] = value1 + value2
+			intSlice[intSlice[pointer+3]] = value1 + value2
 			pointer = pointer + 4
 		} else if command.opcode == 2 {
 			// multiplication
 			value1 := getValue(command, 0, intSlice, pointer)
 			value2 := getValue(command, 1, intSlice, pointer)
 
-			intSlice[intSlice[pointer + 3]] = value1 * value2
+			intSlice[intSlice[pointer+3]] = value1 * value2
 			pointer = pointer + 4
 		} else if command.opcode == 3 {
 			// receive input
@@ -93,7 +93,7 @@ func RunOpcode(opcode string) string {
 
 			var value, _ = strconv.Atoi(text)
 
-			intSlice[intSlice[pointer + 1]] = value
+			intSlice[intSlice[pointer+1]] = value
 
 			pointer = pointer + 2
 		} else if command.opcode == 4 {
@@ -118,18 +118,18 @@ func RunOpcode(opcode string) string {
 		} else if command.opcode == 7 {
 			// less than
 			if getValue(command, 0, intSlice, pointer) < getValue(command, 1, intSlice, pointer) {
-				intSlice[intSlice[pointer + 3]] = 1
+				intSlice[intSlice[pointer+3]] = 1
 			} else {
-				intSlice[intSlice[pointer + 3]] = 0
+				intSlice[intSlice[pointer+3]] = 0
 			}
 
 			pointer = pointer + 4
 		} else if command.opcode == 8 {
 			// equals
 			if getValue(command, 0, intSlice, pointer) == getValue(command, 1, intSlice, pointer) {
-				intSlice[intSlice[pointer + 3]] = 1
+				intSlice[intSlice[pointer+3]] = 1
 			} else {
-				intSlice[intSlice[pointer + 3]] = 0
+				intSlice[intSlice[pointer+3]] = 0
 			}
 
 			pointer = pointer + 4
